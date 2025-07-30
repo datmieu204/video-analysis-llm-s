@@ -4,13 +4,12 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-ENV/
 env.bak/
 venv.bak/
 .env/
-
+*.env
+*.env.example
+*.env.local
 *.ipynb_checkpoints
 
 .log
