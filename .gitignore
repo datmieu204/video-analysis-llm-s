@@ -21,4 +21,4 @@ venv.bak/
 
 saved_transcripts/
 
-*.test.py
+test.py
