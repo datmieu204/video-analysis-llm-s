@@ -8,3 +8,12 @@ ffmpeg-python>=0.2.0
 openai-whisper
 youtube-transcript-api>=0.6.1
 groq>=0.4.2
+
+# llm
+
+# api
+motor
+
+# chore
+python-multipart
+chardet
