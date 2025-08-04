@@ -25,9 +25,25 @@ DEFAULT_CONFIG = {
     "model": "llama-3.3-70b-versatile"
 }
 
+GOOGLE_API_KEYS = [key for key in (
+    os.environ.get("GOOGLEAI_API_KEY"),
+    os.environ.get("GOOGLEAI_API_KEY_1"),
+    os.environ.get("GOOGLEAI_API_KEY_2"),
+    os.environ.get("GOOGLEAI_API_KEY_3"),
+    os.environ.get("GOOGLEAI_API_KEY_4"),
+) if key]
+
 def get_api_key(config: Dict, name_api_key: str) -> str:
     """
     Get the API key from environment variables or configuration.
+
+    Args:
+        config (Dict): Configuration dictionary.
+        name_api_key (str): Name of the environment variable to look for the API key.
+    Returns:
+        str: The API key.
+    Raises:
+        ValueError: If the API key is not found in the environment variables or configuration.
     """
     if not name_api_key:
         name_api_key = "GROQ_API_KEY"
@@ -42,10 +58,13 @@ def get_api_key(config: Dict, name_api_key: str) -> str:
     print(f"Using API key from {name_api_key} environment variable or configuration.")
     return api_key
 
-
 def get_config(user_config: Dict) -> Dict:
     """
     Combine user-provided configuration with default settings.
+    Args:
+        user_config (Dict): User-provided configuration dictionary.
+    Returns:
+        Dict: Merged configuration dictionary.
     """
     config = DEFAULT_CONFIG.copy()
     config.update(user_config)
@@ -55,6 +74,10 @@ def get_config(user_config: Dict) -> Dict:
 def get_output_path(config: Dict) -> str:
     """
     Generate the output path for the transcript file based on the source URL or path.
+    Args:
+        config (Dict): Configuration dictionary containing the source URL or path.
+    Returns:
+        str: The output path for the transcript file.
     """
     source = config.get("source_url_or_path", "")
     source_type = config.get("type_of_source", "").lower()
@@ -75,8 +98,3 @@ def get_output_path(config: Dict) -> str:
     else:
         fallback = sanitize(Path(source).stem or "unknown")
         return f"transcript_{fallback}.txt"
-
-# if __name__ == "__main__":
-#     print("Default configuration:")
-#     print(DEFAULT_CONFIG)
-#     print("API Key (GROQ_API_KEY):", get_api_key(DEFAULT_CONFIG, "GROQ_API_KEY"))
