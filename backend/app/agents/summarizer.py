@@ -2,7 +2,7 @@
 
 import asyncio
 
-from typing import Dict, Any, List, Tuple
+from typing import List
 from backend.app.prompts.summarize_prompt import summarize_chunk_prompt, summarize_merge_prompt
 from backend.app.core.multi_llms import MultiLLMs
 from backend.app.utils.splitter import text_splitter
