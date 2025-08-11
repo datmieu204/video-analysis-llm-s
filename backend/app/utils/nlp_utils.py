@@ -80,8 +80,12 @@ class ModelManager:
         """Load sentiment analysis model"""
         logger.info("Loading sentiment model...")
         self.sentiment_tokenizer = AutoTokenizer.from_pretrained(self.SENTIMENT_MODEL)
-        self.sentiment_model = AutoModelForSequenceClassification.from_pretrained(self.SENTIMENT_MODEL)
-        
+        self.sentiment_model = AutoModelForSequenceClassification.from_pretrained(
+            self.SENTIMENT_MODEL,
+            # low_cpu_mem_usage=False,
+            # torch_dtype=None
+        )
+
         if self.device == "cuda":
             self.sentiment_model = self.sentiment_model.half().to(self.device)  # Use FP16
         else:
@@ -93,8 +97,12 @@ class ModelManager:
         """Load embedding model"""
         logger.info("Loading embedding model...")
         self.embedding_tokenizer = AutoTokenizer.from_pretrained(self.EMBEDDING_MODEL)
-        self.embedding_model = AutoModel.from_pretrained(self.EMBEDDING_MODEL)
-        
+        self.embedding_model = AutoModel.from_pretrained(
+            self.EMBEDDING_MODEL,
+            # low_cpu_mem_usage=False,
+            # torch_dtype=None
+        )
+
         if self.device == "cuda":
             self.embedding_model = self.embedding_model.half().to(self.device)
         else:
@@ -266,7 +274,7 @@ async def score_selection_ultra_fast(text: str, top_n: int = 5) -> List[Dict[str
     if not groups:
         return []
     
-    logger.info(f"📝 Processing {len(groups)} groups from {len(sentences)} sentences")
+    logger.info(f"Processing {len(groups)} groups from {len(sentences)} sentences")
     
     group_texts = [' '.join(item['sentence'] for item in group) for group in groups]
     
