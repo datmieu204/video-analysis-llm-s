@@ -2,15 +2,16 @@
 
 import re
 import os
+import torch
 import asyncio
 import numpy as np
 import time
 import logging
+
 from functools import lru_cache
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Dict, Any, Optional
-import torch
 from transformers import (
     AutoTokenizer, 
     AutoModel, 
@@ -82,12 +83,12 @@ class ModelManager:
         self.sentiment_tokenizer = AutoTokenizer.from_pretrained(self.SENTIMENT_MODEL)
         self.sentiment_model = AutoModelForSequenceClassification.from_pretrained(
             self.SENTIMENT_MODEL,
-            # low_cpu_mem_usage=False,
-            # torch_dtype=None
+            low_cpu_mem_usage=False,
+            device_map=None
         )
 
         if self.device == "cuda":
-            self.sentiment_model = self.sentiment_model.half().to(self.device)  # Use FP16
+            self.sentiment_model = self.sentiment_model.half().to(self.device)
         else:
             self.sentiment_model = self.sentiment_model.to(self.device)
             
@@ -99,8 +100,8 @@ class ModelManager:
         self.embedding_tokenizer = AutoTokenizer.from_pretrained(self.EMBEDDING_MODEL)
         self.embedding_model = AutoModel.from_pretrained(
             self.EMBEDDING_MODEL,
-            # low_cpu_mem_usage=False,
-            # torch_dtype=None
+            low_cpu_mem_usage=False,
+            device_map=None
         )
 
         if self.device == "cuda":
