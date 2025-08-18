@@ -18,7 +18,6 @@ DEFAULT_CONFIG = {
     "youtube_captions": True,
     "transcription_method": "Cloud Whisper",
     "language": "auto",
-    # "prompt_type": "Questions and answers",
     "chunk_size": 5000,
     "parallel_api_calls": 10,
     "max_output_tokens": 4096,
@@ -58,29 +57,21 @@ def get_api_key(config: Dict, name_api_key: str) -> str:
     if not name_api_key:
         name_api_key = "GROQ_API_KEY"
     
-    api_key = APIKeys().get_key()
+    keys = []
+
+    for key, value in os.environ.items():
+        if key.startswith(name_api_key) and value.strip():
+            keys.append(value)
+
+    if not keys and "api_key" in config:
+        raise ValueError(f"API key not found in environment variables or configuration for {name_api_key}.")
+
+    api_key = APIKeys(keys=keys).get_key()
 
     if not api_key:
         raise ValueError("Not found API key. Please set the environment variable or provide it in the configuration.")
     print(f"Using API key from {name_api_key} environment variable or configuration.")
     return api_key
-
-# def get_api_key(config: Dict, name_api_key: str) -> str:
-#     """
-#     Get the API key from environment variables or configuration.
-#     """
-#     if not name_api_key:
-#         name_api_key = "GROQ_API_KEY"
-
-#     api_key = os.getenv(name_api_key)
-
-#     if not api_key and "api_key" in config:
-#         api_key = config["api_key"]
-
-#     if not api_key:
-#         raise ValueError("Not found API key. Please set the environment variable or provide it in the configuration.")
-#     print(f"Using API key from {name_api_key} environment variable or configuration.")
-#     return api_key
 
 def get_config(user_config: Dict) -> Dict:
     """
