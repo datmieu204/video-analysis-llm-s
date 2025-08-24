@@ -2,7 +2,7 @@
 
 import os
 import shutil
-from backend.app.core.embeddings import LawDataLoader, LawVectorStore
+from backend.app.core.embeddings import LawDataLoader, VectorStore
 from backend.app.utils.splitter import text_splitter_documents
 
 def build_and_persist_vectorstore():
@@ -30,7 +30,7 @@ def build_and_persist_vectorstore():
     print(f"Created {len(chunks)} chunks.")
 
     print("Building and persisting vector store...")
-    vector_store = LawVectorStore(persist_directory=persist_directory)
+    vector_store = VectorStore(persist_directory=persist_directory)
     vector_store.build_vectorstore(documents=chunks, collection_name="law_data") 
 
     print("Vector store built and persisted successfully!")

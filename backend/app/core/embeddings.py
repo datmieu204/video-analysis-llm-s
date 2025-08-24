@@ -4,6 +4,7 @@ import os
 import re
 import glob
 import functools
+
 from typing import Dict, List
 from concurrent.futures import ThreadPoolExecutor
 
@@ -89,7 +90,7 @@ class LawDataLoader:
                     ))
         return documents
 
-class LawVectorStore:
+class VectorStore:
     def __init__(self, persist_directory: str = "backend/app/vectorstore"):
         self.persist_directory = persist_directory
         self.api_key = GOOGLE_API_KEYS[0]
@@ -122,8 +123,8 @@ class LawVectorStore:
         Builds and persists the vector store using the provided documents.
         """
         self.vectorstore = Chroma.from_documents(
-            embedding=self.doc_embeddings,
             persist_directory=self.persist_directory,
+            embedding=self.doc_embeddings,
             collection_name=collection_name,
             documents=documents
         )
@@ -145,3 +146,71 @@ class LawVectorStore:
             embedding_function=self.doc_embeddings
         )
         print("Vector store loaded.")
+
+    def add_transcript(self, transcript_id: str, transcript_text: str):
+        """
+        Adds a transcript to the vector store.
+        """
+        from backend.app.utils.splitter import text_splitter_transcript
+
+        chunks = text_splitter_transcript(
+            transcript_text,
+            transcript_id
+        )
+
+        if not chunks:
+            print(f"No chunks found for transcript ID: {transcript_id}")
+            return
+
+        if not os.path.exists(self.persist_directory):
+            os.makedirs(self.persist_directory)
+
+        try:
+            self.load_vectorstore(collection_name="transcript_data")
+        except (FileNotFoundError, Exception) as e:
+            print(f"Error loading vector store: {e}")
+            self.vectorstore = Chroma(
+                persist_directory=self.persist_directory,
+                collection_name="transcript_data",
+                embedding_function=self.doc_embeddings
+            )
+
+        self.vectorstore.add_documents(chunks)
+
+        print(f"Transcript ID {transcript_id} added to vector store.")
+
+    def search_similar_content(self, query: str, top_k: int = 3):
+        """
+        Searches for similar content in vector store.
+        """
+        if not self.vectorstore:
+            try:
+                self.load_vectorstore(collection_name="transcript_data")
+            except Exception as e:
+                print(f"Error loading vector store: {e}")
+                return []
+
+        try:
+            results = self.vectorstore.similarity_search(
+                query,
+                k=top_k
+            )
+            return results
+        except Exception as e:
+            print(f"Error during similarity search: {e}")
+            return []
+
+# if __name__ == "__main__":
+#     vectorstore = LawVectorStore()
+
+#     vectorstore.add_transcript(
+#         transcript_id="youtube_topBLaz4zgk",
+#         transcript_text="Hello. Um, I'm Brodie McCloy. I'm currently a third-year medical student at Trinity College. And right now, this year, I do, uh, history and philosophy of science. So it's been a while since I've done A-level physics, chemistry, all that sort of stuff. So we'll see how this interview goes. Um, I'm gonna be showing you the sort of how we're expecting the Zoom interviews to go. So from now on, if you are not having an interview in person, you'll be invited to a Zoom interview, and right now, we're doing a natural science interview."
+#     )
+
+#     results = vectorstore.search_similar_content(
+#         query="Who is Brodie McCloy?",
+#         top_k=5,
+#     )
+
+#     print(results)

@@ -3,7 +3,8 @@
 import itertools
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-from backend.app.utils.config import GOOGLE_API_KEYS
+from langchain_openai import ChatOpenAI
+from backend.app.utils.config import GOOGLE_API_KEYS, OPENAI_API_KEY
 
 class MultiLLMs:
     def __init__(self, api_keys=GOOGLE_API_KEYS, model="gemini-1.5-flash", **kwargs):
@@ -19,9 +20,20 @@ class MultiLLMs:
             api_key=api_key,
             **self.kwargs
         )
-    
+
+    def get_llm_chatbot(self):
+        api_key = OPENAI_API_KEY
+        return ChatOpenAI(
+            model=self.model,
+            api_key=api_key,
+            **self.kwargs
+        )
+
     def invoke(self, prompt: str):
-        llm = self.get_llm()
+        if GOOGLE_API_KEYS:
+            llm = self.get_llm()
+        else:
+            llm = self.get_llm_chatbot()
         response = llm.invoke(prompt)
         return response
     
