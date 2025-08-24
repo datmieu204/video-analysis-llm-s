@@ -10,6 +10,13 @@ youtube-transcript-api>=0.6.1
 groq>=0.4.2
 
 # llm
+langgraph
+langchain[google-genai]
+langchain[groq]
+langchain
+langchain-core
+langchain-community
+google-generativeai
 
 # api
 motor
