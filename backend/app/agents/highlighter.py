@@ -17,10 +17,13 @@ class Highlighter:
         self.multi_llms = MultiLLMs(**kwargs)
 
     async def highlight_text(self, text: str) -> List[Dict[str, Any]]:
+        """
+        Highlights important sections of the provided text using LLMs.
+        """
         async with semaphore:
             try:
-                candidate_highlights = score_selection(text, top_n=5)
-                
+                candidate_highlights = await score_selection(text, top_n=5)
+
                 if not candidate_highlights:
                     logging.info("No candidate highlights found after scoring.")
                     return []
