@@ -40,6 +40,8 @@ GROQ_API_KEYS = [key for key in (
     os.environ.get("GROQ_API_KEY_2"),
 ) if key]
 
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
 class APIKeys:
     def __init__(self, keys: list = GROQ_API_KEYS):
         self.keys = keys
