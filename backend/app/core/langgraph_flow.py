@@ -57,7 +57,7 @@ class TranscriptWorkflow:
         return {"highlights": highlights_clean}
 
     async def violation_node(self, state: dict) -> dict:
-        from backend.app.agents.violence_detecter import ViolenceDetector
+        from backend.app.agents.violence_detector import ViolenceDetector
         violence_detector = ViolenceDetector()
         text = state["transcript_text"]
         violations = await violence_detector.analyze_transcript_chunks(text)
