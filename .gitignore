@@ -1,16 +1,7 @@
+# backend
 __pycache__/
 *.__pycache__
-*.py[cod]
-*.pyo
-*.pyd
-.Python
-env.bak/
-venv.bak/
-.env/
 .env
-*.env
-*.env.example
-*.env.local
 *.ipynb_checkpoints
 
 .log
@@ -22,3 +13,16 @@ venv.bak/
 saved_transcripts/
 
 test.py
+
+main.py
+
+run.bat
+backend.bat
+vectorstore/
+# frontend
+
+node_modules/
+dist/
+build/
+.cache/
+frontend.bat
