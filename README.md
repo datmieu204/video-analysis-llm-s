@@ -1,24 +1,24 @@
 # Video Analysis with Large Language Models
 
-Dự án này là một ứng dụng web hoàn chỉnh cho phép người dùng phân tích sâu nội dung video. Bằng cách cung cấp một URL video (ví dụ: từ YouTube), hệ thống sẽ tự động gỡ băng (transcribe), thực hiện các phân tích dựa trên AI, và cho phép người dùng "trò chuyện" với nội dung video thông qua một chatbot thông minh.
+This project is a complete web application that enables users to deeply analyze video content. By providing a video URL (e.g., from YouTube), the system automatically transcribes, performs AI-driven analysis, and allows users to “chat” with the video content through an intelligent chatbot.  
 
-## ✨ Tính năng chính
+## ✨ Key Features
 
-- **Xử lý Video từ URL**: Dễ dàng nhập URL video từ các nền tảng phổ biến để bắt đầu phân tích.
-- **Gỡ băng tự động**: Tích hợp mô hình **OpenAI Whisper** để chuyển đổi lời thoại trong video thành văn bản với độ chính xác cao.
-- **Phân tích đa tác vụ bằng AI**:
-    - **Tóm tắt nội dung**: Tự động tạo bản tóm tắt ngắn gọn, súc tích về nội dung chính của video.
-    - **Trích xuất điểm nhấn**: Xác định và liệt kê các câu nói, ý tưởng quan trọng hoặc đáng chú ý nhất.
-    - **Phát hiện vi phạm chính sách**: Sử dụng kỹ thuật RAG (Retrieval-Augmented Generation) để đối chiếu nội dung video với một bộ quy tắc (ví dụ: chính sách của YouTube) và cảnh báo các vi phạm tiềm ẩn.
-- **Chatbot tương tác (Hỏi-đáp với RAG)**: Đặt câu hỏi bằng ngôn ngữ tự nhiên về nội dung video và nhận câu trả lời chính xác, được trích xuất trực tiếp từ ngữ cảnh của video.
-- **Giao diện Web hiện đại**: Giao diện người dùng được xây dựng bằng **React**, đảm bảo trải nghiệm mượt mà và trực quan.
+- **Video Processing from URL**: Easily input video URLs from popular platforms to start the analysis.  
+- **Automatic Transcription**: Integrated with **OpenAI Whisper** to convert speech in videos into text with high accuracy.  
+- **Multi-task AI Analysis**:
+  - **Content Summarization**: Automatically generate concise summaries of the video’s main ideas.  
+  - **Highlight Extraction**: Identify and list the most important or noteworthy quotes and ideas.  
+  - **Policy Violation Detection**: Use **RAG (Retrieval-Augmented Generation)** to compare video content against a set of rules (e.g., YouTube policies) and flag potential violations.  
+- **Interactive Chatbot (Q&A with RAG)**: Ask natural language questions about the video content and receive accurate answers, directly grounded in the video context.  
+- **Modern Web Interface**: A user-friendly **React**-based interface for smooth and intuitive user experience.  
 
 ## 🎥 Demo
 
 ![Video Demo](https://raw.githubusercontent.com/datmieu204/video-analysis-llm-s/main/demo.gif)
 
+## 🏛️ System Architecture
 
-## 🏛️ Kiến trúc hệ thống
 
 ```
 │   requirements.txt
@@ -66,79 +66,85 @@ Dự án này là một ứng dụng web hoàn chỉnh cho phép người dùng 
 │   │   │   chroma.sqlite3
 ```
 
-Hệ thống được xây dựng theo kiến trúc Client-Server, bao gồm hai thành phần chính:
 
-1.  **Backend (Python/FastAPI)**:
-    - **Framework**: FastAPI.
-    - **Lõi AI**: Sử dụng **LangChain** và **LangGraph** để xây dựng và điều phối các "tác nhân AI" (AI Agents).
-    - **Mô hình ngôn ngữ**: Tận dụng sức mạnh của các mô hình từ OpenAI (ví dụ: `gpt-4o-mini`).
-    - **Knowledge Base**: Sử dụng **ChromaDB** làm cơ sở dữ liệu vector (Vector Database) để lưu trữ embeddings và hỗ trợ kỹ thuật RAG.
-    - **Xử lý đa phương tiện**: Dùng `yt-dlp` để tải video và `ffmpeg` để xử lý âm thanh.
+The system follows a Client-Server architecture with two main components:  
 
-2.  **Frontend (React/Vite)**:
-    - **Framework**: React.
-    - **Build Tool**: Vite.
-    - **Giao diện**: Các component được thiết kế để hiển thị kết quả phân tích và tương tác với chatbot một cách hiệu quả.
+1. **Backend (Python/FastAPI)**:  
+   - **Framework**: FastAPI.  
+   - **AI Core**: Uses **LangChain** and **LangGraph** to build and orchestrate AI Agents.  
+   - **Language Models**: Powered by OpenAI models (e.g., `gpt-4o-mini`).  
+   - **Knowledge Base**: **ChromaDB** as the vector database to store embeddings and support RAG.  
+   - **Multimedia Processing**: `yt-dlp` for video downloading and `ffmpeg` for audio processing.  
 
-### Luồng hoạt động
+2. **Frontend (React/Vite)**:  
+   - **Framework**: React.  
+   - **Build Tool**: Vite.  
+   - **Interface**: Components designed for displaying analysis results and interacting with the chatbot.  
 
-1.  **Người dùng** cung cấp URL video qua giao diện Frontend.
-2.  **Frontend** gửi yêu cầu đến API `/process_video` của **Backend**.
-3.  **Backend** tải âm thanh, dùng **Whisper** để gỡ băng.
-4.  Văn bản transcript được chia nhỏ, chuyển thành vector (embeddings) và lưu vào **ChromaDB**.
-5.  Một luồng **LangGraph** được kích hoạt, điều phối các Agent (Summarizer, Highlighter, ViolenceDetector) thực hiện phân tích.
-6.  Kết quả phân tích được trả về cho **Frontend** và hiển thị.
-7.  Khi người dùng chat, **Frontend** gọi API `/chat`. **Backend** sử dụng RAG để truy vấn thông tin từ **ChromaDB** và tạo câu trả lời.
+### Workflow
 
-## ⚙️ Hướng dẫn cài đặt và chạy dự án
+1. **User** provides a video URL via the Frontend.  
+2. **Frontend** sends a request to the Backend’s `/process_video` API.  
+3. **Backend** downloads the audio and uses **Whisper** to transcribe it.  
+4. Transcript text is split, embedded into vectors, and stored in **ChromaDB**.  
+5. A **LangGraph flow** orchestrates multiple Agents (Summarizer, Highlighter, ViolenceDetector) to perform the analysis.  
+6. Analysis results are sent back to the **Frontend** for display.  
+7. For chat, **Frontend** calls the `/chat` API. The **Backend** uses RAG to query **ChromaDB** and generate context-grounded answers.  
 
-### Yêu cầu môi trường
-- **Python** 3.9+
-- **Node.js** 18+
-- **FFmpeg**: Phải được cài đặt và thêm vào biến môi trường `PATH` của hệ thống.
+## ⚙️ Installation & Setup
 
-### 1. Cài đặt Backend
+### Requirements
+- **Python** 3.9+  
+- **Node.js** 18+  
+- **FFmpeg**: Must be installed and added to the system `PATH`.  
+
+### 1. Backend Setup
 
 ```bash
-# 1. Di chuyển vào thư mục backend
+# 1. Navigate to backend folder
 cd backend
 
-# 2. Tạo và kích hoạt môi trường ảo
+# 2. Create and activate a virtual environment
 python -m venv venv
-# Trên Windows:
+# On Windows:
 .\venv\Scripts\activate
-# Trên macOS/Linux:
+# On macOS/Linux:
 # source venv/bin/activate
 
-# 3. Cài đặt các thư viện cần thiết
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Tạo file .env và cung cấp API key
-# Tạo một file tên là .env trong thư mục backend và thêm nội dung sau:
+# 4. Create .env file with your API key
+# Inside backend folder, create a file named .env with content:
 # OPENAI_API_KEY="your_openai_api_key_here"
 
-# 5. Chạy server backend
+# 5. Start the backend server
 uvicorn app.app:app --reload --port 8000
 ```
 
-### 2. Cài đặt Frontend
+### 2. Frontend Setup
 
 ```bash
-# 1. Mở một terminal khác và di chuyển vào thư mục frontend
+# 1. Open a new terminal and navigate to frontend
 cd frontend/video-app
 
-# 2. Cài đặt các gói phụ thuộc
+# 2. Install dependencies
 npm install
 
-# 3. Chạy ứng dụng frontend
+# 3. Start the frontend app
 npm run dev
 ```
 
-### 3. Truy cập ứng dụng
-Sau khi cả hai server đã chạy, mở trình duyệt và truy cập: `http://localhost:5173`
+### 3. Access the App
 
-## 🚀 Hướng phát triển
-- **Phân tích đa phương thức (Multimodal)**: Phân tích cả hình ảnh trong video để phát hiện hành động, đối tượng.
-- **Tối ưu hóa hiệu năng**: Cải thiện tốc độ gỡ băng và phân tích.
-- **Mở rộng bộ Agent**: Thêm các agent mới như phân tích cảm xúc, nhận diện thực thể.
-- **Triển khai lên Cloud**: Đóng gói ứng dụng bằng Docker và triển khai lên các nền tảng đám mây.
+Once both servers are running, open your browser at: http://localhost:5173
+
+### 🚀 Future Development
+
+Multimodal Analysis: Extend to visual analysis (images/frames) for action/object detection.
+
+Performance Optimization: Speed up transcription and analysis pipelines.
+
+Expand Agent Set: Add agents for sentiment analysis, entity recognition, etc.
+
+Cloud Deployment: Package with Docker and deploy on cloud platforms.
